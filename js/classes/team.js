@@ -23,6 +23,6 @@ export class Team {
         this.apothecary = false;
         this.df = 1;
         this.cheerleader = this.assistant = this.reroll = 0;
-        this.race = race; 
+        this.race = race;  
     }
 }
