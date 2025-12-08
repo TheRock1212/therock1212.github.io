@@ -1,6 +1,6 @@
 import { getRaces } from "./requests/request.js";
 import { getTemplates } from "./requests/request.js";
-import { Team } from "./classes/team.js";
+import { Team } from "./classes/team.js"; 
 import { Player } from "./classes/player.js";
 
 
