@@ -9,7 +9,7 @@ let templates;
 let selectedRace;
 let team;
 
-window.norseClause = function () {
+window.norseClause = function () { 
     if(selectedRace && selectedRace['name'] === "Norse") {
         if(document.querySelector("#league").value == "Chaos Clash") {
             document.querySelector("#special").innerHTML = selectedRace['special'];
