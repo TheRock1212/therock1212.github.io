@@ -1,9 +1,11 @@
 import { getRaces } from "./requests/request.js";
 import { getTemplates } from "./requests/request.js";
+import { getCompetitions } from "./requests/request.js";
+import { getPDF } from "./requests/request.js";
 import { Team } from "./classes/team.js"; 
 import { Player } from "./classes/player.js";
 
-
+let comp;
 let races;
 let templates;
 let selectedRace;
@@ -45,9 +47,14 @@ function setSpecial() {
 async function init() {
     
     races = await getRaces();
-    let selectRace = document.getElementById("race");
+    comp = await getCompetitions();
+    let select = document.getElementById("race");
     races.forEach(r => {
-        selectRace.add(new Option(r['name'], r['id']));
+        select.add(new Option(r['name'], r['id']));
+    });
+    select = document.querySelector("#rosters");
+    comp.forEach(r => {
+        select.add(new Option(r['name'], r['id']));
     });
 
 }
@@ -59,7 +66,7 @@ async function setRaces() {
         selectedRace = null;
         return;
     }
-    team = new Team(1050, Number(document.getElementById('race').value));
+    team = new Team(1050, Number(document.getElementById('race').value), document.querySelector("#rosters").value);
     selectedRace = races.find(r => r['id'] == document.getElementById('race').value);
     //Cambio apo
     const apo = document.getElementById("apo");
@@ -222,6 +229,7 @@ function setTemplate(e) {
             team.value += selectedTemplate['cost'];
         }
         document.querySelector("#treasury").textContent = team.treasury;
+        document.querySelector("#value").textContent = team.value;
         document.querySelector(`#ma_${index}`).textContent = selectedTemplate['ma'];
         document.querySelector(`#st_${index}`).textContent = selectedTemplate['st'];
         document.querySelector(`#ag_${index}`).textContent = `${selectedTemplate['ag']}+`;
@@ -442,6 +450,12 @@ function pdf() {
     if(mess) {
         alert(mess);
     } else {
+        team.competition = Number(document.querySelector("#rosters").value);
+        getPDF(JSON.stringify({
+            ...team,
+            players: Array.from(team.players.values())
+        }));
+        return;
         const element = document.querySelector("body");
 
         // crea una copia del contenuto

@@ -2,6 +2,7 @@
 export class Team {
     name;
     coach;
+    competition;
     race;
     reroll;
     df;
@@ -14,9 +15,10 @@ export class Team {
     treasury;
     value;
 
-    constructor(treasury, race) {
+    constructor(treasury, race, competition) {
         this.players = new Map();
         this.treasury = treasury;
+        this.competition = competition;
         this.value = 0;
         this.name = this.coach = '';
         this.league = this.special = null;
