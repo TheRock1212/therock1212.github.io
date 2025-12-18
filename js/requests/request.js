@@ -1,6 +1,6 @@
 export function getRaces() {
-    //return fetch('https://api.goodstone.space/api/v1/race/all')
-    return fetch('http://localhost:8080/api/v1/race/all')
+    return fetch('https://api.goodstone.space/api/v1/race/all')
+    //return fetch('http://localhost:8080/api/v1/race/all')
     .then(res => res.json())
     .then(data => {
         return data;
@@ -25,8 +25,8 @@ export function getTemplates(race) {
 }
 
 export function getCompetitions() {
-    //return fetch(`https://api.goodstone.space/api/v1/league/leagues`)
-    return fetch(`http://localhost:8080/api/v1/league/leagues`)
+    return fetch(`https://api.goodstone.space/api/v1/league/leagues`)
+    //return fetch(`http://localhost:8080/api/v1/league/leagues`)
     .then(res => res.json())
     .then(data => {
         return data
@@ -37,7 +37,8 @@ export function getCompetitions() {
 }
 
 export function getPDF(team) {
-    return fetch(`http://localhost:8080/api/v1/team/pdf`, {
+    //return fetch(`http://localhost:8080/api/v1/team/pdf`, {
+    return fetch(`https://api.goodstone.space/api/v1/team/pdf`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
