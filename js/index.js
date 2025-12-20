@@ -361,7 +361,7 @@ function setStaff(e) {
         }
         case "apothecary": {
             const apo = elem.checked;
-            team.appothecary = apo;
+            team.apothecary = apo;
             team.treasury -= apo ? 50 : -50;
             if(team.treasury < 0) {
                 alert("MAX Treasury 1050k");
