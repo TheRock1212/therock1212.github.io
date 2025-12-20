@@ -4,6 +4,7 @@ import { getCompetitions } from "./requests/request.js";
 import { getPDF } from "./requests/request.js";
 import { Team } from "./classes/team.js"; 
 import { Player } from "./classes/player.js";
+import { addTeam } from "./requests/request.js";
 
 let comp;
 let races;
@@ -456,41 +457,6 @@ function pdf() {
             players: Array.from(team.players.values())
         }));
         return;
-        const element = document.querySelector("body");
-
-        // crea una copia del contenuto
-        const clone = element.cloneNode(true);
-
-        // sostituisci gli input text con il loro valore
-        clone.querySelectorAll("input[type='text']").forEach(input => {
-            const span = document.createElement("span");
-            span.textContent = input.value;
-            input.parentNode.replaceChild(span, input);
-        });
-        clone.querySelectorAll("input[type='number']").forEach(input => {
-            const span = document.createElement("span");
-            span.textContent = input.value;
-            input.parentNode.replaceChild(span, input);
-        });
-        const originals = document.querySelectorAll("select"); // select nel DOM "vero"              // il clone che stai usando
-
-        clone.querySelectorAll("select").forEach((sel, i) => {
-            const orig = originals[i];           // match by index
-            const selectedIndex = orig ? orig.selectedIndex : sel.selectedIndex;
-            const span = document.createElement("span");
-            span.textContent = sel.options[selectedIndex]?.text || "";
-            sel.parentNode.replaceChild(span, sel);
-            console.log("orig selectedIndex:", orig.selectedIndex, "value:", orig.value);
-        });
-        clone.querySelector("#btn").remove();
-
-        // ora generi il PDF sulla copia
-        html2pdf(clone, {
-            margin: 1,
-            filename: 'roster.pdf',
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: [210, 297], orientation: 'landscape' }
-        });
     }
 }
 
@@ -560,6 +526,37 @@ function reset() {
     document.querySelector("#last_line").innerHTML = '';
 }
 
+function send() {
+    if(!team) {
+        return;
+    }
+    if(selectedRace['special'].includes("Team Captain")) {
+        const cap = Number(document.querySelector("#captain").value);
+        team.players.forEach(p => {
+            if(p.nr == cap) {
+                p.captain = true;
+            }
+        });
+    }
+    const mess = validate();
+    if(mess) {
+        alert(mess);
+    } else {
+        team.competition = Number(document.querySelector("#rosters").value);
+       const resp = addTeam(JSON.stringify({
+            ...team,
+            players: Array.from(team.players.values())
+        }));
+        let msg = `Team ${team.name} `;
+        if(resp['esito'] == 0) {
+            msg += `non `;
+        } 
+        msg += `inserito`;
+        alert(msg);
+        return;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", init);
 document.getElementById("race").addEventListener("change", setRaces);
 document.querySelectorAll(".staff").forEach(n => {
@@ -578,3 +575,4 @@ document.querySelectorAll(".numbers").forEach(n => {
 document.querySelector("#btn").addEventListener("click", pdf);
 document.querySelector("#name").addEventListener("change", setTeamName);
 document.querySelector("#coach").addEventListener("change", setCoach);
+document.querySelector("#btn_team").addEventListener("click", send);

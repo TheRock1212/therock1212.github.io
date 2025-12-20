@@ -50,8 +50,23 @@ export function getPDF(team) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "roster.pdf";
+        a.download = `${team.coach}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
+    });
+}
+
+export function addTeam(team) {
+    //return fetch(`http://localhost:8080/api/v1/team/add`, {
+    return fetch(`https://api.goodstone.space/api/v1/team/add`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: team
+    })
+    .then(res => res.json())
+    .then(data => {
+        return data;
     });
 }
