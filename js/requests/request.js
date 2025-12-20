@@ -50,7 +50,7 @@ export function getPDF(team) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${team.coach}.pdf`;
+        a.download = `roster.pdf`;
         a.click();
         URL.revokeObjectURL(url);
     });
