@@ -56,7 +56,7 @@ export function getPDF(team) {
     });
 }
 
-export function addTeam(team) {
+export async function addTeam(team) {
     //return fetch(`http://localhost:8080/api/v1/team/add`, {
     return fetch(`https://api.goodstone.space/api/v1/team/add`, {
         method: "PUT",
@@ -67,6 +67,7 @@ export function addTeam(team) {
     })
     .then(res => res.json())
     .then(data => {
+        console.log(data);
         return data;
     });
 }

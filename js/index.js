@@ -11,6 +11,7 @@ let races;
 let templates;
 let selectedRace;
 let team;
+let league;
 
 window.norseClause = function () { 
     if(selectedRace && selectedRace['name'] === "Norse") {
@@ -21,6 +22,37 @@ window.norseClause = function () {
             document.querySelector("#special").innerHTML = "";
             team.special = null;
         }
+    }
+}
+
+async function send() {
+    if(!team) {
+        return;
+    }
+    if(selectedRace['special'].includes("Team Captain")) {
+        const cap = Number(document.querySelector("#captain").value);
+        team.players.forEach(p => {
+            if(p.nr == cap) {
+                p.captain = true;
+            }
+        });
+    }
+    const mess = validate();
+    if(mess) {
+        alert(mess);
+    } else {
+        team.competition = Number(document.querySelector("#rosters").value);
+       const resp = await addTeam(JSON.stringify({
+            ...team,
+            players: Array.from(team.players.values())
+        }));
+        let msg = `Team ${team.name} `;
+        if(resp['esito'] == 0) {
+            msg += `non `;
+        } 
+        msg += `inserito`;
+        alert(msg);
+        return;
     }
 }
 
@@ -45,6 +77,19 @@ function setSpecial() {
     console.log(team);
 }
 
+function setComp() {
+
+    league = comp.find(l => l['id'] == document.getElementById('rosters').value);
+    if(league['name'] == "Dieci Castella Cup") {
+        let btn = document.querySelector("#bts");
+        let html = `<input type="button" value="Invia Team" id="btn_team">`;
+        btn.innerHTML += html;
+        document.querySelector("#btn_team").addEventListener("click", send);
+    }
+    console.log(league);
+    document.getElementById("treasury").textContent = Number(league['treasury']);
+}
+
 async function init() {
     
     races = await getRaces();
@@ -54,6 +99,7 @@ async function init() {
         select.add(new Option(r['name'], r['id']));
     });
     select = document.querySelector("#rosters");
+    select.add(new Option("Choose", 0));
     comp.forEach(r => {
         select.add(new Option(r['name'], r['id']));
     });
@@ -67,7 +113,7 @@ async function setRaces() {
         selectedRace = null;
         return;
     }
-    team = new Team(1050, Number(document.getElementById('race').value), document.querySelector("#rosters").value);
+    team = new Team(league['treasury'], Number(document.getElementById('race').value), document.querySelector("#rosters").value);
     selectedRace = races.find(r => r['id'] == document.getElementById('race').value);
     //Cambio apo
     const apo = document.getElementById("apo");
@@ -299,6 +345,7 @@ function setStaff(e) {
                 }
                 document.querySelector("#treasury").textContent = team.treasury;
                 team.value += diff * selectedRace['reroll'];
+                document.querySelector("#value").textContent = team.value;
             }
             break;
         }
@@ -337,6 +384,7 @@ function setStaff(e) {
                 }
                 document.querySelector("#treasury").textContent = team.treasury;
                 team.value += diff * 10;
+                document.querySelector("#value").textContent = team.value;
             }
             break;
         }
@@ -356,6 +404,7 @@ function setStaff(e) {
                 }
                 document.querySelector("#treasury").textContent = team.treasury;
                 team.value += diff * 10;
+                document.querySelector("#value").textContent = team.value;
             }
             break;
         }
@@ -371,6 +420,7 @@ function setStaff(e) {
             }
             document.querySelector("#treasury").textContent = team.treasury;
             team.value += apo ? 50 : -50;
+            document.querySelector("#value").textContent = team.value;
             console.log(team);
             break;
         }
@@ -518,43 +568,12 @@ function reset() {
     team = null;
     document.getElementById("apo").innerHTML = "<input type='checkbox' id='apothecary' name='apo' >";
     document.getElementById("rr_test").textContent = `Reroll: `;
-    document.querySelector("#treasury").textContent = 1050;
+    document.querySelector("#treasury").textContent = league['treasury'];
     document.querySelector("#dfs").value = 1;
     document.querySelector("#cheers").value = 0;
     document.querySelector("#asscoach").value = 0;
     document.querySelector("#rr").value = 0;
     document.querySelector("#last_line").innerHTML = '';
-}
-
-function send() {
-    if(!team) {
-        return;
-    }
-    if(selectedRace['special'].includes("Team Captain")) {
-        const cap = Number(document.querySelector("#captain").value);
-        team.players.forEach(p => {
-            if(p.nr == cap) {
-                p.captain = true;
-            }
-        });
-    }
-    const mess = validate();
-    if(mess) {
-        alert(mess);
-    } else {
-        team.competition = Number(document.querySelector("#rosters").value);
-       const resp = addTeam(JSON.stringify({
-            ...team,
-            players: Array.from(team.players.values())
-        }));
-        let msg = `Team ${team.name} `;
-        if(resp['esito'] == 0) {
-            msg += `non `;
-        } 
-        msg += `inserito`;
-        alert(msg);
-        return;
-    }
 }
 
 document.addEventListener("DOMContentLoaded", init);
@@ -575,4 +594,5 @@ document.querySelectorAll(".numbers").forEach(n => {
 document.querySelector("#btn").addEventListener("click", pdf);
 document.querySelector("#name").addEventListener("change", setTeamName);
 document.querySelector("#coach").addEventListener("change", setCoach);
-document.querySelector("#btn_team").addEventListener("click", send);
+//document.querySelector("#btn_team").addEventListener("click", send);
+document.getElementById("rosters").addEventListener("change", setComp);
