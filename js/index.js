@@ -80,12 +80,11 @@ function setSpecial() {
 function setComp() {
 
     league = comp.find(l => l['id'] == document.getElementById('rosters').value);
-    if(league['name'] == "Dieci Castella Cup") {
-        let btn = document.querySelector("#bts");
-        let html = `<input type="button" value="Invia Team" id="btn_team">`;
-        btn.innerHTML += html;
-        document.querySelector("#btn_team").addEventListener("click", send);
-    }
+    
+    let btn = document.querySelector("#bts");
+    let html = `<input type="button" value="Invia Team" id="btn_team">`;
+    btn.innerHTML += html;
+    document.querySelector("#btn_team").addEventListener("click", send);
     console.log(league);
     document.getElementById("treasury").textContent = Number(league['treasury']);
 }

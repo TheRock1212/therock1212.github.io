@@ -25,7 +25,7 @@ export function getTemplates(race) {
 }
 
 export function getCompetitions() {
-    return fetch(`https://api.goodstone.space/api/v1/league/leagues`)
+    return fetch(`https://api.goodstone.space/api/v1/league/available`)
     //return fetch(`http://localhost:8080/api/v1/league/leagues`)
     .then(res => res.json())
     .then(data => {
